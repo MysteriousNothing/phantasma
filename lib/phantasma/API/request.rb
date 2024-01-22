@@ -36,11 +36,11 @@ GetAddressTransactions GetTransactionByBlockHashAndIndex GetTransaction InvokeRa
       end
 
       def method_missing(method_name, *args, &block)
-        return super method_name, *args, &block unless @allowed_methods_hash.include?(method_name.to_s)
+        return super(method_name, *args, &block) unless @allowed_methods_hash.include?(method_name.to_s)
         self.class.send(:define_method, method_name) do |*method_args|
           build_request(method_name, method_args)
         end
-        self.send method_name, *args, &block
+        self.send(method_name, *args, &block)
       end
 
       private
