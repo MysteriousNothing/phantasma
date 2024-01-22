@@ -1,4 +1,5 @@
 # Phantasma Ruby SDK
+[Phantasma](https://phantasma.io/) - A Smart NFT Carbon Negative Blockchain for Gaming, dApp
 
 This gem is community edition of Phantasma Blockchain SDK in Ruby.
 
@@ -7,7 +8,7 @@ https://github.com/phantasma-io/Phantasma-Py#documentation-for-api-endpoints
 
 ## Install
 ```
-gem "phantasma", :git => "git://github.com/MysteriousNothing/phantasma.git"
+gem "phantasma", :git => "https://github.com/MysteriousNothing/phantasma.git"
 ```
 
 ## Test API URL
@@ -16,7 +17,7 @@ http://testnet.phantasma.io:5101
 https://phantasma.gitbook.io/developers/overview/quick-start
 
 The Ruby version does not use different classes, we use Ruby metaprogramming.
-This means adding new endpoint means updating `ALLOWED_METHOD` const in  
+This means adding new endpoint means updating `ALLOWED_METHOD` const in `lib/phantasma/API/request.rb`
 
 #### AccountApi
 ```
@@ -90,13 +91,13 @@ api.abci_query(params)
 https://testnet.phantasma.io/swagger/index.html
 
 ## Todo
-[ ] Finish documentation and tests (https://github.com/phantasma-io/Phantasma-Py/tree/main/docs - Some request have incorrect params names)
+- [ ] Finish documentation and tests (https://github.com/phantasma-io/Phantasma-Py/tree/main/docs - Some request have incorrect params names)
 
-[ ] RPC or eRPC(Google RPC, http2)
+- [ ] RPC or eRPC(Google RPC, http2)
 
-[ ] Phantasma VM in Ruby
+- [ ] Phantasma VM in Ruby
 
-[ ] Add API command line support
+- [ ] Add API command line support
 
 ## Contributing
 
