@@ -13,7 +13,7 @@ GetBlockByHash GetBlockByHeight GetBlockHeight GetBlockTransactionCountByHash Ge
 GetRawLatestBlock GetChains GetChain abci_query GetValidatorsSettings health net_info request_block status GetContractByAddress GetContract
 GetLeaderboard GetNexus GetOrganizationByName GetOrganization GetOrganizations GetInterop GetPlatform GetPlatforms rpc
 GetLatestSaleHash GetSale GetNFT GetNFTs GetTokenBalance GetTokenData GetToken GetTokens GetAddressTransactionCount
-GetAddressTransactions GetTransactionByBlockHashAndIndex GetTransaction InvokeRawScript SendRawTransaction GetValidators GetValidators/{type}].freeze
+GetAddressTransactions GetTransactionByBlockHashAndIndex GetTransaction InvokeRawScript SendRawTransaction GetValidators GetValidatorByType].freeze
 
     def self.allowed_methods_hash
       hash = {}
@@ -46,7 +46,14 @@ GetAddressTransactions GetTransactionByBlockHashAndIndex GetTransaction InvokeRa
       private
 
       def build_request(method_name, method_args)
+        # Special case GetValidator/{type}
         uri = URI("#{@url}/api/#{@api_version}/#{@allowed_methods_hash[method_name.to_s]}".freeze)
+        if method_name == 'get_validator_by_type'
+          raise PhantasmaResponseError, 'GetValidator type not specified' if method_args[:type].nil?
+
+          type = method_args[:type]
+          uri = URI("#{@url}/api/#{@api_version}/GetValidator/#{type}".freeze)
+        end
         puts uri if @debug
         uri.query = URI.encode_www_form(method_args.first) unless method_args.empty?
         response = Net::HTTP.get_response(uri)
