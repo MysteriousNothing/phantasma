@@ -34,7 +34,6 @@ RSpec.describe Phantasma::API::Request do
         response = request.get_account({account: wallet_address})
         expect(response.to_s).to include('"address"=>"P2KLjs2Ykj8Ub1MMyFg5JWMaYk1aQPeDZa87YReVw3EifoS"')
         # We don't want add expected json body which is massive and changes day by day. if walled address is included response should be correct
-        expect(response.to_s).to eq(response.to_s)
       end
 
       it 'give invalid address error' do
@@ -47,7 +46,6 @@ RSpec.describe Phantasma::API::Request do
       it 'receive accounts information for a given accounts' do
         response = request.get_accounts({accounts: [wallet_address]})
         expect(response.to_s).to include('"address"=>"P2KLjs2Ykj8Ub1MMyFg5JWMaYk1aQPeDZa87YReVw3EifoS"')
-        expect(response.to_s).to eq(response.to_s)
       end
 
       it 'give invalid address error' do
@@ -62,7 +60,6 @@ RSpec.describe Phantasma::API::Request do
       it 'receive addressed by symbol' do
 
         expect(response.to_s).to include('address')
-        expect(response.to_s).to eq(response.to_s)
       end
 
       it 'should request symbol which does not exist and return empty array' do
@@ -120,7 +117,6 @@ RSpec.describe Phantasma::API::Request do
       it 'receive accounts information for a given accounts' do
         response = request.get_accounts({accounts: [wallet_address]})
         expect(response.to_s).to include('[{"address"')
-        expect(response.to_s).to eq(response.to_s)
       end
 
       it 'give invalid address error' do
@@ -133,7 +129,6 @@ RSpec.describe Phantasma::API::Request do
       it 'receive addressed by symbol' do
         response = request.get_addresses_by_symbol({symbol: 'SOUL', extended: false})
         expect(response.to_s).to include('address')
-        expect(response.to_s).to eq(response.to_s)
       end
 
       it 'should request symbol which does not exist and return empty array' do
