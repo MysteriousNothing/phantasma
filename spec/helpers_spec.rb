@@ -14,6 +14,13 @@ RSpec.describe Phantasma::Helpers do
         expect(camel_to_snake).to match snake_case_regex
       end
     end
+
+    it "should check if Swagger endpoints length ALLOWED_METHODS are same" do
+      expect(described_class.test_api_endpoints&.kind_of?(Array)).to eq(true)
+      expect(described_class.test_api_endpoints.length).to be > 1
+      expect(described_class.test_api_endpoints.length).to eq(Phantasma::API::ALLOWED_METHODS.length)
+    end
+
   end
 
   describe 'camel_to_snake' do

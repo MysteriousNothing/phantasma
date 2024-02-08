@@ -1,26 +1,11 @@
 # frozen_string_literal: true
-require_relative '../helpers'
+require_relative 'api'
 require 'uri'
 require 'net/http'
 require 'json'
 
 module Phantasma
   module API
-
-    # Copied from here: https://github.com/phantasma-io/Phantasma-Py#documentation-for-api-endpoints
-    ALLOWED_METHODS = %w[GetAccount GetAccounts GetAddressesBySymbol LookUpName GetAuction GetAuctionsCount GetAuctions
-GetBlockByHash GetBlockByHeight GetBlockHeight GetBlockTransactionCountByHash GetLatestBlock GetRawBlockByHash GetRawBlockByHeight
-GetRawLatestBlock GetChains GetChain abci_query GetValidatorsSettings health net_info request_block status GetContractByAddress GetContract
-GetLeaderboard GetNexus GetOrganizationByName GetOrganization GetOrganizations GetInterop GetPlatform GetPlatforms rpc
-GetLatestSaleHash GetSale GetNFT GetNFTs GetTokenBalance GetTokenData GetToken GetTokens GetAddressTransactionCount
-GetAddressTransactions GetTransactionByBlockHashAndIndex GetTransaction InvokeRawScript SendRawTransaction GetValidators GetValidatorByType].freeze
-
-    def self.allowed_methods_hash
-      hash = {}
-      ALLOWED_METHODS.each { |value| hash["#{Phantasma::Helpers.camel_to_snake(value.strip)}"] = "#{value}" }
-      hash
-    end
-
     class Request
       attr_accessor :url, :api_version, :debug
 
