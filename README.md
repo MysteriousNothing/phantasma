@@ -55,7 +55,7 @@ rspec spec/API/api_spec.rb
 ```
 
 ## Todo
-- [ ] Finish documentation and tests (https://github.com/phantasma-io/Phantasma-Py/tree/main/docs - Some request have incorrect params names)
+- [ ] Finish tests
 
 - [ ] RPC or eRPC(Google RPC, http2)
 
