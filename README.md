@@ -34,7 +34,7 @@ api.look_up_name({name: 'SOUL'})
 ruby lib/phantasma/documentation.rb
 ```
 
-# Phantasma Documentation for API Endpoints with responses
+## Phantasma Documentation for API Endpoints with responses
 https://testnet.phantasma.io/swagger/index.html
 
 ## Helpers
