@@ -375,9 +375,6 @@ RSpec.describe Phantasma::API::Request do
   end
 
   describe 'ConnectionApi' do
-    let(:chain_type) { 'main' }
-    let (:block_hash) { "DA44AFCCD72AEFCD10D4B408CEEC32552F6358D64C9A8AE0702EDF506B6CFE44" }
-
     describe '#abci_query' do
       it 'receive abci_query' do
         response = request.abci_query({path: 'string', data: 'string', height: 0, prove: false})
