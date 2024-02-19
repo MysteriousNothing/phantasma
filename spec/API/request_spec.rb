@@ -318,4 +318,59 @@ RSpec.describe Phantasma::API::Request do
     end
 
   end
+
+  describe 'ChainApi' do
+    let(:chain_type) { 'main' }
+    let (:block_hash) { "DA44AFCCD72AEFCD10D4B408CEEC32552F6358D64C9A8AE0702EDF506B6CFE44" }
+
+    describe '#get_chains' do
+      it 'receive chains with extended true' do
+        response = request.get_chains({extended: true})
+        puts response if debug
+        expect(response.to_s).to include('name')
+        expect(response.to_s).to include('address')
+        expect(response.to_s).to include('height')
+        expect(response.to_s).to include('organization')
+        expect(response.to_s).to include('contracts')
+        expect(response.to_s).to include('dapps')
+      end
+
+      it 'receive chains with extended info false' do
+        response = request.get_chains({extended: false})
+        puts response if debug
+        expect(response.to_s).to include('name')
+        expect(response.to_s).to include('address')
+        expect(response.to_s).to include('height')
+        expect(response.to_s).to include('organization')
+        expect(response.to_s).to include('contracts')
+        expect(response.to_s).to include('dapps')
+      end
+
+      it 'receive Bad Request error' do
+        response = request.get_chains({extended: 'string'})
+        puts response if debug
+        expect(response.to_s).to include("Bad Request")
+      end
+    end
+
+    describe '#get_chain' do
+      it 'receive chain' do
+        response = request.get_chain({name: chain_type, extended: true})
+        puts response.to_json if debug
+        expect(response.to_s).to include('name')
+        expect(response.to_s).to include('address')
+        expect(response.to_s).to include('height')
+        expect(response.to_s).to include('organization')
+        expect(response.to_s).to include('contracts')
+        expect(response.to_s).to include('dapps')
+      end
+
+      it 'get invalid chain error' do
+        response = request.get_chain({name: chain_type+'1', extended: true})
+        puts response if debug
+        # Todo: report this as bug, should return invalid chain or better error.
+        expect(response.to_s).to eq("{message: 'Internal Server Error', body: '', error: 'Net::HTTPInternalServerError'}")
+      end
+    end
+  end
 end
