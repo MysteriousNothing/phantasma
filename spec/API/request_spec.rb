@@ -427,7 +427,7 @@ RSpec.describe Phantasma::API::Request do
         expect(response.to_s).to include('value')
       end
 
-      it 'receive request_block' do
+      it 'block height does dont exists and get response' do
         response = request.request_block({height: 99999})
         puts response if debug
         expect(response.to_s).to include('response')
