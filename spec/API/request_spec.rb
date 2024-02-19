@@ -373,4 +373,100 @@ RSpec.describe Phantasma::API::Request do
       end
     end
   end
+
+  describe 'ConnectionApi' do
+    let(:chain_type) { 'main' }
+    let (:block_hash) { "DA44AFCCD72AEFCD10D4B408CEEC32552F6358D64C9A8AE0702EDF506B6CFE44" }
+
+    describe '#abci_query' do
+      it 'receive abci_query' do
+        response = request.abci_query({path: 'string', data: 'string', height: 0, prove: false})
+        puts response if debug
+        expect(response.to_s).to include('response')
+        expect(response.to_s).to include('code')
+        expect(response.to_s).to include('log')
+        expect(response.to_s).to include('info')
+        expect(response.to_s).to include('index')
+        expect(response.to_s).to include('height')
+        expect(response.to_s).to include('codespace')
+      end
+    end
+
+    describe '#health' do
+      it 'receive health' do
+        response = request.health
+        puts response if debug
+        expect(response.to_s).to eq('{}')
+      end
+    end
+
+    describe '#status' do
+      it 'receive status' do
+        response = request.status
+        puts response.to_json if debug
+        expect(response.to_s).to include('nodeInfo')
+        expect(response.to_s).to include('syncInfo')
+        expect(response.to_s).to include('validatorInfo')
+      end
+    end
+
+    describe '#net_info' do
+      it 'receive net_info' do
+        response = request.net_info
+        puts response.to_json if debug
+        expect(response.to_s).to include('listening')
+        expect(response.to_s).to include('listeners')
+        expect(response.to_s).to include('nPeers')
+        expect(response.to_s).to include('peers')
+      end
+    end
+
+    describe '#request_block' do
+      it 'receive request_block' do
+        response = request.request_block({height: 0})
+        puts response.to_json if debug
+        expect(response.to_s).to include('response')
+        expect(response.to_s).to include('info')
+        expect(response.to_s).to include('value')
+      end
+
+      it 'receive request_block' do
+        response = request.request_block({height: 99999})
+        puts response if debug
+        expect(response.to_s).to include('response')
+        expect(response.to_s).to include('code')
+        expect(response.to_s).to include('info')
+        expect(response.to_s).to include('height')
+        expect(response.to_s).to include('codespace')
+        expect(response.to_s).to eq('{"response"=>{"code"=>1, "log"=>"", "info"=>"Block get", "index"=>"0", "height"=>"0", "codespace"=>""}}')
+      end
+
+      it 'receive request_block bigint is not allowed' do
+        response = request.request_block({height: 999999999999})
+        puts response.to_json if debug
+        expect(response.to_s).to include('Net::HTTPBadRequest')
+      end
+    end
+
+    describe '#get_validators_settings' do
+      it 'receive get_validators_settings' do
+        response = request.get_validators_settings
+        puts response.to_json if debug
+        expect(response.to_s).to include('address')
+        expect(response.to_s).to include('kind')
+        expect(response.to_s).to include('isSystem')
+        expect(response.to_s).to include('isInterop')
+        expect(response.to_s).to include('isUser')
+        expect(response.to_s).to include('tendermintAddress')
+        expect(response.to_s).to include('tendermintPublicKey')
+        expect(response.to_s).to include('text')
+        expect(response.to_s).to include('platformID')
+        expect(response.to_s).to include('name')
+        expect(response.to_s).to include('host')
+        expect(response.to_s).to include('port')
+        expect(response.to_s).to include('url')
+      end
+    end
+
+  end
 end
