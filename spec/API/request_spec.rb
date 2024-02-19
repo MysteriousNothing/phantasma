@@ -7,6 +7,10 @@ RSpec.describe Phantasma::API::Request do
   let(:api_version) { 'v1' }
   let(:request) { Phantasma::API::Request.new(url: api_url, api_version: api_version, debug: true) }
   let(:response) { Net::HTTPSuccess.new(1.0, '200', 'OK') }
+  let(:chain_type) { 'main' }
+  let(:contract_name) { 'governance' }
+  let(:governance_address) { 'S3dKT1eHWjcUHdhE6ahxCZhi3CWHRkWaYFuHpoyEbtecvAM' }
+  let(:hex_regex) { /\A[\da-fA-F]+\z/ }
   # show response result
   let(:debug) { true }
 
@@ -168,7 +172,6 @@ RSpec.describe Phantasma::API::Request do
   end
 
   describe 'BlockApi' do
-    let(:chain_type) { 'main' }
     let (:block_hash) { "DA44AFCCD72AEFCD10D4B408CEEC32552F6358D64C9A8AE0702EDF506B6CFE44" }
 
     describe '#get_block_height' do
@@ -307,7 +310,7 @@ RSpec.describe Phantasma::API::Request do
       it 'receive get_raw_latest_block' do
         response = request.get_raw_latest_block({chainInput: chain_type})
         puts response if debug
-        expect(response.to_s).to match(/\A[\da-fA-F]+\z/)
+        expect(response.to_s).to match(hex_regex)
       end
 
       it 'get chain not found error' do
@@ -320,7 +323,7 @@ RSpec.describe Phantasma::API::Request do
   end
 
   describe 'ChainApi' do
-    let(:chain_type) { 'main' }
+
     let (:block_hash) { "DA44AFCCD72AEFCD10D4B408CEEC32552F6358D64C9A8AE0702EDF506B6CFE44" }
 
     describe '#get_chains' do
@@ -464,6 +467,78 @@ RSpec.describe Phantasma::API::Request do
         expect(response.to_s).to include('url')
       end
     end
-
   end
+
+  describe 'ContractApi' do
+    describe '#get_contracts' do
+      it 'receive get_contracts with extended true' do
+        response = request.get_contracts({chainAddressOrName: chain_type, extended: true})
+        puts response.to_json if debug
+        expect(response.to_s).to include('name')
+        expect(response.to_s).to include('address')
+        expect(response.to_s).to include('script')
+        expect(response.to_s).to include('events')
+      end
+
+      it 'receive get_contracts with extended false' do
+        response = request.get_contracts({chainAddressOrName: chain_type, extended: false})
+        puts response.to_json if debug
+        expect(response.to_s).to include('name')
+        expect(response.to_s).to include('address')
+        expect(response.to_s).to include('script')
+        expect(response.to_s).to include('events')
+      end
+
+      it 'receive Chain not found error' do
+        response = request.get_contracts({chainAddressOrName: 'string', extended: true})
+        puts response if debug
+        expect(response.to_s).to eq('{"error"=>"Chain not found"}')
+      end
+    end
+
+    describe '#get_contract' do
+      it 'receive get_contract' do
+        response = request.get_contract({chainAddressOrName: chain_type, contractName: contract_name})
+        puts response.to_json if debug
+        expect(response.to_s).to include('name')
+        expect(response.to_s).to include('address')
+        expect(response.to_s).to include('script')
+        expect(response.to_s).to include('events')
+      end
+
+      it 'receive Contract not found error' do
+        response = request.get_contract({chainAddressOrName: chain_type, contractName: 'string'})
+        puts response if debug
+        expect(response.to_s).to eq('{"error"=>"Contract not found"}')
+      end
+
+      it 'receive Chain not found error' do
+        response = request.get_contract({chainAddressOrName: 'string', contractName: 'string'})
+        expect(response.to_s).to eq('{"error"=>"Chain not found"}')
+      end
+    end
+
+    describe '#get_contract_by_address' do
+      it 'receive get_contract_by_address' do
+        response = request.get_contract_by_address({chainAddressOrName: chain_type, contractAddress: governance_address})
+        puts response.to_json if debug
+        expect(response.to_s).to include('name')
+        expect(response.to_s).to include('address')
+        expect(response.to_s).to include('script')
+        expect(response.to_s).to include('events')
+      end
+
+      it 'receive Invalid contract address error' do
+        response = request.get_contract_by_address({chainAddressOrName: chain_type, contractAddress: 'string'})
+        puts response if debug
+        expect(response.to_s).to eq('{"error"=>"Invalid contract address"}')
+      end
+
+      it 'receive Chain not found error' do
+        response = request.get_contract_by_address({chainAddressOrName: 'string', contractAddress: 'string'})
+        expect(response.to_s).to eq('{"error"=>"Chain not found"}')
+      end
+    end
+  end
+
 end
