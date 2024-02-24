@@ -31,27 +31,29 @@ module Phantasma
 
       private
 
-      def build_request(method_name, method_args, get_method = true)
-        # Special case GetValidator/{type}
-        uri = URI("#{@url}/api/#{@api_version}/#{@allowed_methods_hash[method_name.to_s]}".freeze)
-        # Todo refactor this part in future
-        if method_name.to_s == 'get_validator_by_type' && !method_args.empty?
-          raise PhantasmaResponseError, 'GetValidator type not specified' if method_args.first[:type].nil?
+      def build_request(method_name, method_args)
+        uri, get_method = construct_uri(method_name, method_args)
+        request = create_request(uri, method_args, get_method)
+        response = execute_request(request, uri)
+        parse_response(response)
+      rescue PhantasmaResponseError => e
+        e
+      end
 
-          type = method_args.first[:type]
-          uri = URI("#{@url}/api/#{@api_version}/GetValidators/#{type}".freeze)
+      def construct_uri(method_name, method_args)
+        base_uri = "#{@url}/api/#{@api_version}/"
+        case method_name.to_s
+        when 'get_validator_by_type' && !method_args.empty?
+          raise PhantasmaResponseError, 'GetValidator type not specified' if method_args.first[:type].nil?
+          [URI("#{base_uri}GetValidators/#{method_args.first[:type]}"), true]
+        when 'rpc'
+          [URI("#{@url}/#{method_name.to_s}"), false]
+        else
+          [URI("#{base_uri}#{@allowed_methods_hash[method_name.to_s]}"), true]
         end
-        # Todo refactor this part in future
-        if method_name.to_s == 'rpc'
-          uri = URI("#{@url}/#{method_name.to_s}".freeze)
-          get_method = false
-        end
-        puts uri if @debug
-        http = Net::HTTP.new(uri.host, uri.port)
-        if uri.scheme == 'https'
-          http.use_ssl = true
-          # http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-        end
+      end
+
+      def create_request(uri, method_args, get_method)
         if get_method
           uri.query = URI.encode_www_form(method_args.first) unless method_args.empty?
           request = Net::HTTP::Get.new(uri)
@@ -61,16 +63,24 @@ module Phantasma
         end
         request['Content-Type'] = 'application/json'
         request['Accept'] = 'application/json'
+        request
+      end
 
-        response = http.request(request)
+      def execute_request(request, uri)
+        http = Net::HTTP.new(uri.host, uri.port)
+        if uri.scheme == 'https'
+          http.use_ssl = true
+          # http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        end
+        http.request(request)
+      end
 
+      def parse_response(response)
         if response.is_a?(Net::HTTPSuccess)
           JSON.parse(response.body)
         else
           raise PhantasmaResponseError, "{message: '#{response.message}', body: '#{response.body}', error: '#{response.class}'}"
         end
-      rescue PhantasmaResponseError => e
-        e
       end
     end
   end
