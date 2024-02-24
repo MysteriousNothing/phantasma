@@ -6,6 +6,8 @@ This gem is community edition of Phantasma Blockchain SDK in Ruby.
 ## Install
 ```
 gem "phantasma", :git => "https://github.com/MysteriousNothing/phantasma.git"
+# or RubyGems
+gem "phantasma" 
 ```
 
 #### Test API URL
