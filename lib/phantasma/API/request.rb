@@ -3,6 +3,7 @@ require_relative 'api'
 require 'uri'
 require 'net/http'
 require 'json'
+require 'openssl'
 
 module Phantasma
   module API
@@ -30,18 +31,39 @@ module Phantasma
 
       private
 
-      def build_request(method_name, method_args)
+      def build_request(method_name, method_args, get_method = true)
         # Special case GetValidator/{type}
         uri = URI("#{@url}/api/#{@api_version}/#{@allowed_methods_hash[method_name.to_s]}".freeze)
-        if method_name == 'get_validator_by_type'
-          raise PhantasmaResponseError, 'GetValidator type not specified' if method_args[:type].nil?
+        # Todo refactor this part in future
+        if method_name.to_s == 'get_validator_by_type' && !method_args.empty?
+          raise PhantasmaResponseError, 'GetValidator type not specified' if method_args.first[:type].nil?
 
-          type = method_args[:type]
-          uri = URI("#{@url}/api/#{@api_version}/GetValidator/#{type}".freeze)
+          type = method_args.first[:type]
+          uri = URI("#{@url}/api/#{@api_version}/GetValidators/#{type}".freeze)
+        end
+        # Todo refactor this part in future
+        if method_name.to_s == 'rpc'
+          uri = URI("#{@url}/#{method_name.to_s}".freeze)
+          get_method = false
         end
         puts uri if @debug
-        uri.query = URI.encode_www_form(method_args.first) unless method_args.empty?
-        response = Net::HTTP.get_response(uri)
+        http = Net::HTTP.new(uri.host, uri.port)
+        if uri.scheme == 'https'
+          http.use_ssl = true
+          # http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        end
+        if get_method
+          uri.query = URI.encode_www_form(method_args.first) unless method_args.empty?
+          request = Net::HTTP::Get.new(uri)
+        else
+          request = Net::HTTP::Post.new(uri)
+          request.body = JSON.dump(method_args.first)
+        end
+        request['Content-Type'] = 'application/json'
+        request['Accept'] = 'application/json'
+
+        response = http.request(request)
+
         if response.is_a?(Net::HTTPSuccess)
           JSON.parse(response.body)
         else

@@ -9,7 +9,7 @@ gem "phantasma", :git => "https://github.com/MysteriousNothing/phantasma.git"
 ```
 
 #### Test API URL
-http://testnet.phantasma.io:5101
+https://testnet.phantasma.info
 ## Live API URL
 https://phantasma.gitbook.io/developers/overview/quick-start
 
@@ -18,11 +18,17 @@ This means adding new endpoint means updating `ALLOWED_METHOD` const in [lib/pha
 
 #### Examples how to use API:
 ```
-api = Phantasma::API::Request.new(url: 'http://testnet.phantasma.io:5101')
+api = Phantasma::API::Request.new(url: 'https://testnet.phantasma.info')
 api.get_account({account: '1231313'})
 api.get_accounts({accounts: ['1231313']})
 api.get_addresses_by_symbol({symbol: 'SOUL', extended: false})
 api.look_up_name({name: 'SOUL'})
+```
+
+#### Examples how to use RPC call with API:
+```
+api = Phantasma::API::Request.new(url: 'https://testnet.phantasma.info')
+api.rpc({"jsonrpc": "2.0", "method": "health", "id": "1", "params": [] })
 ```
 
 ## Full API documentation is here:
@@ -35,7 +41,7 @@ ruby lib/phantasma/documentation.rb
 ```
 
 ## Phantasma Documentation for API Endpoints with responses
-https://testnet.phantasma.io/swagger/index.html
+https://testnet.phantasma.info/swagger/index.html
 
 ## Helpers
 Find missing or deprecated API endpoints by calling
@@ -55,7 +61,7 @@ rspec spec/API/api_spec.rb
 ```
 
 ## Todo
-- [ ] Finish tests
+- [ ] Finish tests - 233 examples, 5 failures, 228 passed
 
 - [ ] RPC or eRPC(Google RPC, http2)
 

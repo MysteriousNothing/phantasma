@@ -6,8 +6,8 @@ require 'json'
 module Phantasma
   class Documentation
     # Based on test swagger json generate documentation
-    # https://testnet.phantasma.io/swagger/v1/swagger.json
-    SWAGGER_URL = 'https://testnet.phantasma.io/swagger/v1/swagger.json'
+    # https://testnet.phantasma.info/swagger/v1/swagger.json
+    SWAGGER_URL = 'https://testnet.phantasma.info/swagger/v1/swagger.json'
 
     def self.generate_documentation
       api_data = http_request
